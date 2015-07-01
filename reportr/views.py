@@ -13,3 +13,8 @@ def index(request):
     return {
         'points': points
     }
+
+
+@view_config(route_name='imprint', renderer='templates/imprint.mako')
+def imprint(request):
+    return {}

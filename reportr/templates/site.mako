@@ -28,8 +28,11 @@
 
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
-        <h1>reportr</h1>
+      <div class="col-md-11">
+        <h1><a href="${request.route_url('home')}">reportr</a></h1>
+      </div>
+      <div class="col-md-1 imprint">
+        <a href="${request.route_url('imprint')}">Imprint</a>
       </div>
     </div>
     ${self.body()}
