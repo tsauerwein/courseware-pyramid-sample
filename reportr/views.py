@@ -1,4 +1,6 @@
 from pyramid.view import view_config
+from reportr.models import DBSession, Point
+from geoalchemy2.shape import to_shape
 
 
 @view_config(route_name='home', renderer='templates/index.mako')
@@ -13,26 +15,28 @@ def imprint(request):
 
 @view_config(route_name='points', renderer='json')
 def points(request):
-    points = [
-        {'title': 'Broken street-light', 'lon': 8.538265, 'lat': 47.394572},
-        {'title': 'Potholes', 'lon': 8.516206, 'lat': 47.390098},
-        {'title': 'Graffiti', 'lon': 8.538866, 'lat': 47.375802},
-        {'title': 'Broken street-light', 'lon': 8.529853, 'lat': 47.383357}
-    ]
+    points = DBSession.query(Point).all()
 
-    points_geojson = [{
-        'type': 'Feature',
-        'properties': {
-            'title': point.get('title')
-        },
-        'geometry': {
-            'type': 'Point',
-            'coordinates': [
-                point.get('lon'),
-                point.get('lat')
-            ]
-        }
-    } for point in points]
+    points_geojson = []
+    for point in points:
+        # convert from WKB to a Shapely geometry
+        geom = to_shape(point.geom)
+
+        points_geojson.append({
+            'type': 'Feature',
+            'properties': {
+                'id': point.id,
+                'title': point.title,
+                'date': str(point.date)
+            },
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [
+                    geom.x,
+                    geom.y
+                ]
+            }
+        })
 
     return {
         'type': 'FeatureCollection',
