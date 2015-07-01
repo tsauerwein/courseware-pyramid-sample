@@ -1,6 +1,7 @@
 import os
 import sys
 import transaction
+from datetime import datetime
 
 from sqlalchemy import engine_from_config
 
@@ -13,7 +14,7 @@ from pyramid.scripts.common import parse_vars
 
 from ..models import (
     DBSession,
-    MyModel,
+    Point,
     Base,
     )
 
@@ -36,5 +37,11 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        model = MyModel(name='one', value=1)
-        DBSession.add(model)
+        DBSession.add(
+            Point(title='Broken street-light', date=datetime.now(), geom='SRID=4326;Point(8.538265 47.394572)'))
+        DBSession.add(
+            Point(title='Potholes', date=datetime.now(), geom='SRID=4326;Point(8.516206 47.390098)'))
+        DBSession.add(
+            Point(title='Graffiti', date=datetime.now(), geom='SRID=4326;Point(8.538866 47.375802)'))
+        DBSession.add(
+            Point(title='Broken street-light', date=datetime.now(), geom='SRID=4326;Point(8.529853 47.383357)'))
