@@ -9,8 +9,8 @@ from .models import (
     )
 
 
-@view_config(route_name='home', renderer='templates/mytemplate.mako')
-def my_view(request):
+@view_config(route_name='home', renderer='templates/index.mako')
+def index(request):
     try:
         one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
     except DBAPIError:
