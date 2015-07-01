@@ -16,25 +16,16 @@ var map = new ol.Map({
   })
 });
 
-if (points !== undefined) {
-  var pointSource = new ol.source.Vector();
-  var pointLayer = new ol.layer.Vector({
-    source: pointSource,
-    style: new ol.style.Style({
-      image: new ol.style.Icon({
-        src: 'static/marker.png'
-      })
+var pointSource = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: URL_POINTS
+});
+var pointLayer = new ol.layer.Vector({
+  source: pointSource,
+  style: new ol.style.Style({
+    image: new ol.style.Icon({
+      src: 'static/marker.png'
     })
-  });
-  map.addLayer(pointLayer);
-
-  for(var i = 0; i < points.length; i++) {
-    var point = points[i];
-    var feature = new ol.Feature({
-      title: point.title,
-      geometry: new ol.geom.Point(
-        ol.proj.fromLonLat([point.lon, point.lat], 'EPSG:3857'))
-    });
-    pointSource.addFeature(feature);
-  }
-}
+  })
+});
+map.addLayer(pointLayer);

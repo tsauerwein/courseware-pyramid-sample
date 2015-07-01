@@ -16,14 +16,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/ol3/3.6.0/ol.js"></script>
 
     <script type="text/javascript">
-    var points = [];
-    % for point in points:
-    points.push({
-      title: '${point.get('title')}',
-      lon: ${point.get('lon')},
-      lat: ${point.get('lat')}
-    });
-    % endfor
+    var URL_POINTS = "${request.route_url('points')}";
     </script>
     <script src="${request.static_url('reportr:static/js/app.js')}"></script>
 </%block>
