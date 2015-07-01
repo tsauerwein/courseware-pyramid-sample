@@ -17,6 +17,9 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'psycopg2',
+    'geoalchemy2',
+    'shapely',
     ]
 
 setup(name='reportr',

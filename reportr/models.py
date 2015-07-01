@@ -1,9 +1,10 @@
 from sqlalchemy import (
     Column,
-    Index,
-    Integer,
     Text,
+    Integer,
+    DateTime
     )
+from geoalchemy2 import Geometry
 
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -17,11 +18,14 @@ from zope.sqlalchemy import ZopeTransactionExtension
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
+schema = 'reportr'
 
-class MyModel(Base):
-    __tablename__ = 'models'
+
+class Point(Base):
+    __tablename__ = 'points'
+    __table_args__ = {'schema': schema}
     id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    value = Column(Integer)
-
-Index('my_index', MyModel.name, unique=True, mysql_length=255)
+    title = Column(Text)
+    description = Column(Text)
+    date = Column(DateTime)
+    geom = Column(Geometry('POINT', 4326))
