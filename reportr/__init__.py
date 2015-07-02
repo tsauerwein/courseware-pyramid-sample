@@ -19,6 +19,7 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('points', '/points.json')
     config.add_route('point', '/points/{id}.json')
+    config.add_route('point_add', '/points')
     config.add_route('imprint', '/imprint')
     config.scan()
     return config.make_wsgi_app()

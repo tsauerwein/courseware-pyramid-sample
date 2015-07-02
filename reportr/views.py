@@ -1,8 +1,10 @@
 from pyramid.view import view_config
 from reportr.models import DBSession, Point
-from geoalchemy2.shape import to_shape
+from geoalchemy2.shape import to_shape, from_shape
+from shapely.geometry import Point as PointShape
 from pyramid.httpexceptions import HTTPNotFound, HTTPBadRequest
 from sqlalchemy.orm.exc import NoResultFound
+from datetime import datetime
 
 
 @view_config(route_name='home', renderer='templates/index.mako')
@@ -43,6 +45,31 @@ def point(request):
     return to_geojson(point)
 
 
+@view_config(route_name='point_add', request_method='POST', renderer='json')
+def point_add(request):
+    title = request.POST.get('title', '')
+    description = request.POST.get('description', '')
+    try:
+        # try to get the input parameters
+        lon = float(request.POST.get('lon'))
+        lat = float(request.POST.get('lat'))
+    except ValueError:
+        raise HTTPBadRequest()
+
+    point = Point(
+        title=title,
+        description=description,
+        date=datetime.now(),
+        geom=from_shape(PointShape(lon, lat), srid=4326))
+
+    DBSession.add(point)
+
+    # flush the session so that the point gets its id
+    DBSession.flush()
+
+    return to_geojson(point)
+
+
 def to_geojson(point):
     # convert from WKB to a Shapely geometry
     geom = to_shape(point.geom)
@@ -52,6 +79,7 @@ def to_geojson(point):
         'properties': {
             'id': point.id,
             'title': point.title,
+            'description': point.description,
             'date': str(point.date)
         },
         'geometry': {
