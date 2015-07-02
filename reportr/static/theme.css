@@ -172,3 +172,12 @@ a:hover, a:active {
 .imprint {
   padding: 3px;
 }
+
+#detail, #new {
+  margin-top: 10px;
+  display: none;
+}
+
+#detail #problem-date {
+  font-style: italic;
+}
