@@ -26,3 +26,29 @@ class TestViews(unittest.TestCase):
 
         features = geojson['type']
         self.assertTrue(len(features) > 0)
+
+    def test_point_add_error(self):
+        from .views import point_add
+        from pyramid.httpexceptions import HTTPBadRequest
+
+        request = testing.DummyRequest()
+        request.POST['title'] = 'Test'
+        request.POST['lon'] = ''
+        request.POST['lat'] = ''
+
+        # no lon/lat given
+        self.assertRaises(HTTPBadRequest, point_add, request)
+
+    def test_point_add_success(self):
+        from .views import point_add
+        from pyramid.httpexceptions import HTTPBadRequest
+
+        request = testing.DummyRequest()
+        request.POST['title'] = 'Test'
+        request.POST['lon'] = '8.538265'
+        request.POST['lat'] = '47.394572'
+
+        result = point_add(request)
+
+        self.assertTrue(isinstance(result, dict))
+        self.assertEqual(result['type'], 'Feature')
