@@ -21,6 +21,7 @@ def main(global_config, **settings):
     config.add_route(
         'points_extent', '/points/{xmin},{ymin},{xmax},{ymax}.json')
     config.add_route('point', '/points/{id}.json')
+    config.add_route('point_update', '/points/{id}')
     config.add_route('point_add', '/points')
     config.add_route('imprint', '/imprint')
     config.scan()
