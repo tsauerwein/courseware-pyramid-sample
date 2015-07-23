@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 from reportr.models import DBSession, Point
 from geoalchemy2.shape import to_shape, from_shape
-from shapely.geometry import Point as PointShape
+from shapely.geometry import Point as PointShape, Polygon
 from pyramid.httpexceptions import HTTPNotFound, HTTPBadRequest
 from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime
@@ -20,6 +20,38 @@ def imprint(request):
 @view_config(route_name='points', renderer='json')
 def points(request):
     points = DBSession.query(Point).all()
+    points_geojson = [to_geojson(point) for point in points]
+
+    return {
+        'type': 'FeatureCollection',
+        'features': points_geojson
+    }
+
+
+@view_config(route_name='points_extent', renderer='json')
+def points_extent(request):
+    try:
+        # try to parse the extent coordinates
+        xmin = float(request.matchdict['xmin'])
+        ymin = float(request.matchdict['ymin'])
+        xmax = float(request.matchdict['xmax'])
+        ymax = float(request.matchdict['ymax'])
+    except ValueError:
+        raise HTTPBadRequest()
+
+    # create a Shapely polygon for the extent
+    extent = Polygon([
+        (xmin, ymin),
+        (xmax, ymin),
+        (xmax, ymax),
+        (xmin, ymax),
+    ])
+    extent_geom = from_shape(extent, srid=4326)
+
+    points = DBSession \
+        .query(Point) \
+        .filter(Point.geom.ST_Intersects(extent_geom)) \
+        .all()
     points_geojson = [to_geojson(point) for point in points]
 
     return {

@@ -18,6 +18,8 @@ def main(global_config, **settings):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
     config.add_route('points', '/points.json')
+    config.add_route(
+        'points_extent', '/points/{xmin},{ymin},{xmax},{ymax}.json')
     config.add_route('point', '/points/{id}.json')
     config.add_route('point_add', '/points')
     config.add_route('imprint', '/imprint')
